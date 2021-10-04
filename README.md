@@ -1,5 +1,5 @@
 # Baka4J
-###Note: JDK 17+ required currently doesn't have older version
+### Note: JDK 17+ required currently doesn't have older version
 A bakaláři api wrapper for java <br>
 **This project is under development and currently doesn't have much stuff you can contribute to it** <br><br>
 The main class is [BakaClient](src/main/java/com/panjohnny/baka4j/BakaClient.java)
