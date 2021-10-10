@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.panjohnny.baka4j.elements.BasicElement;
 import com.panjohnny.baka4j.elements.Homework;
+import com.panjohnny.baka4j.elements.Mark;
+import com.panjohnny.baka4j.elements.MarkContainer;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
@@ -87,7 +89,6 @@ public class BakaClient {
         }
         token = json.get("access_token").getAsString();
         authHeader = new BasicHeader("Authorization", "Bearer "+token);
-        System.out.println(token);
     }
 
     /**
@@ -164,4 +165,67 @@ public class BakaClient {
     public int requestOpenedHomeworksCount() {
         return BakaUtils.get(schoolEndpoint+BakaEndpoints.HOMEWORKS_COUNT_ACTUAL, BakaUtils.CONTENT_TYPE, authHeader).getAsInt();
     }
+
+    /**
+     * Retrieves list of marks by subject in {@link MarkContainer}
+     * @return List of containers of different marks by subject
+     * <a href="https://github.com/bakalari-api/bakalari-api-v3/blob/master/moduly/marks.md">Marks documentation</a>
+     * @see MarkContainer
+     */
+    public List<MarkContainer> requestMarks() {
+        JsonArray main = BakaUtils.get(schoolEndpoint+BakaEndpoints.MARKS, BakaUtils.CONTENT_TYPE, authHeader).getAsJsonObject().get("Subjects").getAsJsonArray();
+
+        ArrayList<MarkContainer> containers = new ArrayList<>();
+        for (int i = 0; i < main.size(); i++) {
+            JsonObject curr = main.get(i).getAsJsonObject();
+
+            List<Mark> marks = new ArrayList<>();
+            JsonArray m = curr.get("Marks").getAsJsonArray();
+            // marks
+            for (int j = 0; j < m.size(); j++) {
+                JsonObject ma = m.get(j).getAsJsonObject();
+
+                Mark mark = new Mark(
+                        ma.get("MarkDate").getAsString(),
+                        ma.get("EditDate").getAsString(),
+                        ma.get("Caption").getAsString(),
+                        ma.get("Theme").getAsString(),
+                        ma.get("MarkText").getAsString(),
+                        ma.get("TeacherId").getAsString(),
+                        ma.get("Type").getAsString(),
+                        ma.get("TypeNote").getAsString(),
+                        ma.get("Weight").getAsInt(),
+                        ma.get("SubjectId").getAsString(),
+                        ma.get("IsNew").getAsBoolean(),
+                        ma.get("IsPoints").getAsBoolean(),
+                        ma.get("CalculatedMarkText").getAsString(),
+                        ma.get("ClassRankText")+"",
+                        ma.get("Id").getAsString(),
+                        ma.get("PointsText").getAsString(),
+                        ma.get("MaxPoints").getAsInt()
+                );
+
+                marks.add(mark);
+            }
+
+            BasicElement subj = BasicElement.parse(curr.get("Subject").getAsJsonObject());
+        
+            MarkContainer mc = new MarkContainer(marks, subj,
+                    curr.get("AverageText").getAsString());
+
+            containers.add(mc);
+        }
+
+        return containers;
+    }
+
+    /**
+     * Retrieves count of new marks that has not been requested yet. That means that if you have app on your phone this could not work.
+     * @return number of new not viewed marks
+     */
+    public int requestNewMarksCount() {
+        return BakaUtils.get(schoolEndpoint+BakaEndpoints.MARKS_COUNT_NEW, authHeader, BakaUtils.CONTENT_TYPE).getAsInt();
+    }
+
+
 }
