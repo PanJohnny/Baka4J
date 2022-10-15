@@ -23,6 +23,6 @@
 hs_err_pid*
 
 # files with my login detail for testing purposes
-/src/test/
+/src/test/resources
 
 /.idea

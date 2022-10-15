@@ -1,4 +1,4 @@
-package com.panjohnny.baka4j.rework.util;
+package com.panjohnny.baka4j.util;
 
 import lombok.SneakyThrows;
 

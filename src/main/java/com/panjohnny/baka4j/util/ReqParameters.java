@@ -1,16 +1,25 @@
-package com.panjohnny.baka4j.rework.util;
+package com.panjohnny.baka4j.util;
 
 import java.util.HashMap;
 
 public class ReqParameters {
     private final HashMap<String, String> params = new HashMap<>();
 
+    private String raw;
     public ReqParameters(String fromString) {
         aFromS(fromString);
     }
 
     public ReqParameters() {
 
+    }
+
+    private ReqParameters(Object raw) {
+        this.raw = raw.toString();
+    }
+
+    public static ReqParameters raw(Object obj) {
+        return new ReqParameters(obj);
     }
 
     public ReqParameters set(String key, String value) {
@@ -33,6 +42,9 @@ public class ReqParameters {
 
     @Override
     public String toString() {
+        if (raw != null)
+            return raw;
+
         StringBuilder s = new StringBuilder();
         for (String k : params.keySet()) {
             s.append(k).append("=").append(params.get(k)).append("&");

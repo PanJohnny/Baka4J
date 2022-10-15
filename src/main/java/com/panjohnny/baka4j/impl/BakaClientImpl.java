@@ -1,15 +1,17 @@
-package com.panjohnny.baka4j.rework.client.impl;
+package com.panjohnny.baka4j.impl;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.panjohnny.baka4j.rework.client.BakaClient;
-import com.panjohnny.baka4j.rework.util.ReqParameters;
+import com.panjohnny.baka4j.BakaClient;
+import com.panjohnny.baka4j.util.ReqParameters;
+import com.panjohnny.baka4j.v3.impl.V3ClientImpl;
+import com.panjohnny.baka4j.v3.impl.V3WrapperClientImpl;
 import okhttp3.*;
 
 import java.io.IOException;
 import java.util.Objects;
 
-public class BakaClientImpl implements BakaClient {
+public sealed class BakaClientImpl implements BakaClient permits V3ClientImpl, V3WrapperClientImpl {
     private String token;
     private String refreshToken;
     private final String url;
@@ -30,7 +32,7 @@ public class BakaClientImpl implements BakaClient {
     }
 
     @Override
-    public void authorise(String username, String password) {
+    public void authorize(String username, String password) {
         Request request = post("/api/login", new ReqParameters("client_id=ANDR&grant_type=password").set("username", username).set("password", password)).build();
         try (Response response = httpClient.newCall(request).execute()) {
             if (response.code() != 200) {
@@ -118,5 +120,12 @@ public class BakaClientImpl implements BakaClient {
 
     protected Request.Builder get(String endpoint) {
         return get(endpoint, null);
+    }
+
+    @Override
+    public void authorize(String token, String refreshToken, long expires) {
+        this.token = token;
+        this.refreshToken = refreshToken;
+        this.expiresIn = expires;
     }
 }
