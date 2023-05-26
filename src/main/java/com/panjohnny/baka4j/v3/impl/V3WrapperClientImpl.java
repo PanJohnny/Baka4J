@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.panjohnny.baka4j.impl.BakaClientImpl;
+import com.panjohnny.baka4j.util.AuthException;
 import com.panjohnny.baka4j.v3.V3Client;
 import com.panjohnny.baka4j.v3.V3WrapperClient;
 import com.panjohnny.baka4j.v3.records.ApiInfo;
@@ -29,7 +30,7 @@ public final class V3WrapperClientImpl extends BakaClientImpl implements V3Wrapp
     }
 
     @Override
-    public void authorize(String username, String password) {
+    public void authorize(String username, String password) throws AuthException {
         super.authorize(username, password);
         this.basicClient.authorize(getToken(), getRefreshToken(), getExpires());
     }
@@ -41,7 +42,7 @@ public final class V3WrapperClientImpl extends BakaClientImpl implements V3Wrapp
     }
 
     @Override
-    public void refresh() {
+    public void refresh() throws AuthException {
         super.refresh();
         this.basicClient.authorize(getToken(), getRefreshToken(), getExpires());
     }

@@ -1,10 +1,9 @@
 package com.panjohnny.baka4j.util;
 
-import lombok.SneakyThrows;
-
 import java.util.function.Consumer;
 
 public abstract class RestAction<T> {
+    private final System.Logger logger = System.getLogger(this.getClass().getName());
 
     /**
      * Executes the given success consumer with the RestAction result. Gives the throwable to consumer instead of not handling it.
@@ -27,14 +26,17 @@ public abstract class RestAction<T> {
      * Executes the given success consumer with the RestAction result.
      * @param success Consumer that will consume the RestAction result
      */
-    @SneakyThrows
     @SuppressWarnings({"Convert2Lambda"})
     public void queue(Consumer<T> success) {
         Thread executor = new Thread(new Runnable() {
             @Override
-            @SneakyThrows
             public void run() {
-                T result = handle();
+                T result = null;
+                try {
+                    result = handle();
+                } catch (Throwable e) {
+                    logger.log(System.Logger.Level.ERROR, e);
+                }
                 success.accept(result);
             }
         }, "asyncExecutor@" + this.hashCode());
@@ -46,9 +48,13 @@ public abstract class RestAction<T> {
      * Queues this rest action in this thread. It is not async.
      * @return RestAction result
      */
-    @SneakyThrows
     public T queue() {
-        return handle();
+        try {
+            return handle();
+        } catch (Throwable e) {
+            logger.log(System.Logger.Level.ERROR, e);
+            return null;
+        }
     }
 
     protected abstract T handle() throws Throwable;

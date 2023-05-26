@@ -1,6 +1,7 @@
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.panjohnny.baka4j.BakaClient;
+import com.panjohnny.baka4j.util.AuthException;
 import com.panjohnny.baka4j.v3.V3Client;
 import junit.framework.TestCase;
 
@@ -13,7 +14,11 @@ public class V3Test extends TestCase {
     static {
         JsonObject login = JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(V3WrapperTest.class.getResourceAsStream("login.json")))).getAsJsonObject();
         client = BakaClient.v3(login.get("url").getAsString());
-        client.authorize(login.get("username").getAsString(), login.get("password").getAsString());
+        try {
+            client.authorize(login.get("username").getAsString(), login.get("password").getAsString());
+        } catch (AuthException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void testEndpoint() {
         assertNotNull(client.apiInfo().queue());
@@ -34,7 +39,7 @@ public class V3Test extends TestCase {
         assertNotNull(client.events(Calendar.getInstance().getTime()).public_().queue());
     }
 
-    public void testRefresh() {
+    public void testRefresh() throws AuthException {
         client.refresh();
         assertNotNull(client.getRefreshToken());
         assertNotNull(client.getToken());

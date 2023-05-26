@@ -1,6 +1,7 @@
 package com.panjohnny.baka4j;
 
 import com.panjohnny.baka4j.impl.BakaClientImpl;
+import com.panjohnny.baka4j.util.AuthException;
 import com.panjohnny.baka4j.v3.V3Client;
 import com.panjohnny.baka4j.v3.V3WrapperClient;
 import okhttp3.OkHttpClient;
@@ -26,7 +27,7 @@ public sealed interface BakaClient permits BakaClientImpl, V3Client, V3WrapperCl
     /**
      * Authorises the client
      */
-    void authorize(String username, String password);
+    void authorize(String username, String password) throws AuthException;
 
     /**
      * @return token that the client holds if authorised
@@ -40,7 +41,7 @@ public sealed interface BakaClient permits BakaClientImpl, V3Client, V3WrapperCl
     /**
      * Refreshes the token using refresh token
      */
-    void refresh();
+    void refresh() throws AuthException;
 
     /**
      * @return okhttp client that this object uses
@@ -64,4 +65,14 @@ public sealed interface BakaClient permits BakaClientImpl, V3Client, V3WrapperCl
      * @param expires time when the token expires (System.currentTimeMillis())
      */
     void authorize(String token, String refreshToken, long expires);
+
+    /**
+     * Enables jobs that refresh token in new thread periodically
+     */
+    void enableRefreshJobs();
+
+    /**
+     * Disables jobs that refresh token in new thread periodically
+     */
+    void disableRefreshJobs();
 }
