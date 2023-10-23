@@ -1,23 +1,28 @@
 # Baka4J
-Baka4J is unofficial wrapper for [Bakaláři api v3](https://github.com/bakalari-api/bakalari-api-v3/). It provides a simple way to interact with some api endpoints.
-The client is build using OKHttp client.
+Baka4J je neoficiální wrapper pro [Bakaláři api v3](https://github.com/bakalari-api/bakalari-api-v3/). Pomocí OKHttp komunikuje s API Bakalářů.
 
-## How to use
-This repository is not hosted anywhere. You need to build it yourself. This project has been created using openjdk 18.
+## Použití 
+Projekt si musíte buildnout, takže si ho stáhněte z GitHubu a pomocí mavenu compilujte do jaru.
 
-You can start by referencing `BakaClient`. That is an interface having methods for instancing clients.
+Hlavní objekt je `BakaClient`. Je to interface, pomocí kterého můžete vytvořit svého clienta.
+
+Clienti jsou 2:
+ - v3 - standartní, vrací json
+ - v3Wrapper - vrací java objekty
+
+Prosím mějte na paměti, že jsou hotové jen některé endpointy, pokud nenaleznete co hledáte prosím otevřte issue nebo pull request s vaším řešením.
 
 ```java
 import com.panjohnny.baka4j.BakaClient;
 
 public class Test {
     {
-        BakaClient client = BakaClient.v3(url) | BakaClient.v3Wrapper(url);
+        BakaClient clienti= BakaClient.v3(url) | BakaClient.v3Wrapper(url);
     }
 }
 ```
 
-This will create the BakaClient instance, but this will just provide you with options to login and nothing more. You should use the correct interface when creating object.
+Samo o sobě BakaClient nenabízí jiné metody než login, musíte tedy explicitně vybrat typ.
 
 ```java
 import com.panjohnny.baka4j.BakaClient;
@@ -32,10 +37,8 @@ public class Test {
 }
 ```
 
-Now you can call the methods. This repository provides javadocs with links to [unofficial bakaláři api v3 docs](https://github.com/bakalari-api/bakalari-api-v3/).
-
-## Unit testing
-If you want to unit test this repo you can create file `login.json` in `src/test/resources/` with the following layout.
+## Unit testy
+Pokud chcete testovat, tak vytvořte soubor `login.json` v `src/test/resources/`, který bude vypadat takto:
 ```json
 {
   "username": "JohnDoe",
@@ -43,7 +46,7 @@ If you want to unit test this repo you can create file `login.json` in `src/test
   "url": "https://bakalari.example.com/"
 }
 ```
-Look into `src/test/java` to see unit tests.
+Všechny testy jsou v `src/test/java`.
 
-## Contribute
-Any contribution to this project is welcome. Create pull requests and issues. If you add new endpoint please provide an unit test.
+## Přispívání 
+Budu moc rád za jakýkoliv příspěvek do tohoto projektu.
